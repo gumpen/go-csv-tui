@@ -32,6 +32,8 @@ func drawBox() {
 		i += w
 	}
 
+	termbox.SetCursor(RuneLength(inputString), 0)
+
 	termbox.Flush()
 }
 
@@ -64,4 +66,16 @@ MAINLOOP:
 
 func inputChar(ch rune) {
 	inputString = append(inputString, ch)
+}
+
+func RuneLength(str []rune) int {
+	var l int
+	for _, c := range str {
+		w := runewidth.RuneWidth(c)
+		if w == 0 || w == 2 && runewidth.IsAmbiguousWidth(c) {
+			w = 1
+		}
+		l += w
+	}
+	return l
 }
