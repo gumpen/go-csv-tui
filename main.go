@@ -137,7 +137,16 @@ func main() {
 		os.Exit(1)
 	}
 
-	os.Exit(e.Run())
+	os.Exit(run(e))
+}
+
+func run(e *Engine) int {
+	result := e.Run()
+	if result.err != nil {
+		return 2
+	}
+	fmt.Printf("%s", result.content)
+	return 0
 }
 
 // Read file and return two-dimensional slice
