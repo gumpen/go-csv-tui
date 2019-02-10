@@ -5,15 +5,18 @@ import (
 	"github.com/nsf/termbox-go"
 )
 
+// Drawer manage output to terminal screen
 type Drawer struct {
 	prompt string
 }
 
+// DrawerParameter is parameter required for Draw()
 type DrawerParameter struct {
 	query string
 	rows  []string
 }
 
+// NewDrawer initialize Drawer struct
 func NewDrawer(prompt string) *Drawer {
 	d := &Drawer{
 		prompt: prompt,
@@ -21,6 +24,7 @@ func NewDrawer(prompt string) *Drawer {
 	return d
 }
 
+// Draw output query row and result rows to terminal window
 func (d *Drawer) Draw(param *DrawerParameter) error {
 
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
