@@ -7,19 +7,22 @@ import (
 
 // Drawer manage output to terminal screen
 type Drawer struct {
-	prompt string
+	prompt        string
+	promptRuneLen int
 }
 
 // DrawerParameter is parameter required for Draw()
 type DrawerParameter struct {
-	query string
-	rows  []string
+	query   string
+	rows    []string
+	cursorX int
 }
 
 // NewDrawer initialize Drawer struct
 func NewDrawer(prompt string) *Drawer {
 	d := &Drawer{
-		prompt: prompt,
+		prompt:        prompt,
+		promptRuneLen: cellLen([]rune(prompt)),
 	}
 	return d
 }
@@ -38,6 +41,8 @@ func (d *Drawer) Draw(param *DrawerParameter) error {
 	if err != nil {
 		return err
 	}
+
+	d.drawCursor(param.cursorX+d.promptRuneLen, 0)
 
 	termbox.Flush()
 
@@ -98,4 +103,20 @@ func (d *Drawer) drawRow(x int, y int, cells []termbox.Cell) {
 
 		i += w
 	}
+}
+
+func (d *Drawer) drawCursor(x int, y int) {
+	termbox.SetCursor(x, y)
+}
+
+func cellLen(str []rune) int {
+	var l int
+	for _, c := range str {
+		w := runewidth.RuneWidth(c)
+		if w == 0 || w == 2 && runewidth.IsAmbiguousWidth(c) {
+			w = 1
+		}
+		l += w
+	}
+	return l
 }

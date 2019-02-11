@@ -13,6 +13,7 @@ type Engine struct {
 	queryResult []string
 	drawer      *Drawer
 	table       *TableManager
+	cursorX     int
 }
 
 // EngineParameter is parameter required for NewEngine()
@@ -33,6 +34,7 @@ func NewEngine(param *EngineParameter) (*Engine, error) {
 		queryResult: []string{"", ""},
 		drawer:      NewDrawer(Prompt),
 		table:       NewTableManager(param.rows),
+		cursorX:     0,
 	}
 	return e, nil
 }
@@ -53,8 +55,9 @@ func (e *Engine) Run() *EngineResult {
 		// クエリの実行→queryResult
 
 		dp := &DrawerParameter{
-			query: e.query,
-			rows:  e.queryResult,
+			query:   e.query,
+			rows:    e.queryResult,
+			cursorX: e.cursorX,
 		}
 		err = e.drawer.Draw(dp)
 		if err != nil {
@@ -65,7 +68,7 @@ func (e *Engine) Run() *EngineResult {
 		case termbox.EventKey:
 			switch ev.Key {
 			// case 0:
-			// 	e.addChar(ev.Ch)
+			// 	e.addCharToQuery(ev.Ch)
 			case termbox.KeyEsc:
 				return &EngineResult{content: "esc!!!\n"}
 			}
@@ -76,3 +79,8 @@ func (e *Engine) Run() *EngineResult {
 	}
 	return &EngineResult{}
 }
+
+// func (e *Engine) addCharToQuery(ch rune) {
+// 	// 文字の挿入はカーソルのインデックス位置に合わせないといけない
+// 	e.query = append(e.query, ch)
+// }
