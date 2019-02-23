@@ -37,10 +37,10 @@ func (d *Drawer) Draw(param *DrawerParameter) error {
 		return err
 	}
 
-	err = d.drawResultRows(param.rows)
-	if err != nil {
-		return err
-	}
+	// err = d.drawResultRows(param.rows)
+	// if err != nil {
+	// 	return err
+	// }
 
 	d.drawCursor(param.cursorX+d.promptRuneLen, 0)
 
@@ -119,4 +119,12 @@ func cellLen(str []rune) int {
 		l += w
 	}
 	return l
+}
+
+func runeWidth(r rune) int {
+	w := runewidth.RuneWidth(r)
+	if w == 0 || (w == 2 && runewidth.IsAmbiguousWidth(r)) {
+		w = 1
+	}
+	return w
 }

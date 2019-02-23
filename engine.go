@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	termbox "github.com/nsf/termbox-go"
 )
 
@@ -71,6 +73,8 @@ func (e *Engine) Run() *EngineResult {
 			switch ev.Key {
 			case 0:
 				e.addCharToQuery(ev.Ch)
+			case termbox.KeyBackspace, termbox.KeyBackspace2:
+				e.deleteCharFromQuery()
 			case termbox.KeyArrowLeft:
 				e.moveCursorLeft()
 			case termbox.KeyArrowRight:
@@ -90,7 +94,20 @@ func (e *Engine) addCharToQuery(ch rune) {
 	// 文字の挿入はカーソルのインデックス位置に合わせないといけない
 	queryRune := []rune(e.query)
 	e.query = string(append(queryRune, ch))
-	e.cursorX++
+
+	e.cursorX = e.cursorX + runeWidth(ch)
+
+	// TODO: string, []rune, []termbox.Cellのindexをよしなにmappingする必要がある
+	// マルチバイト文字対応のため
+	fmt.Println("")
+	fmt.Printf("len(e.query):%#v\n", len(e.query))
+	fmt.Printf("len([]rune(e.query)):%#v\n", len([]rune(e.query)))
+	fmt.Printf("cellLen([]rune(e.query)):%#v\n", cellLen([]rune(e.query)))
+	fmt.Printf("e.cursorX:%#v\n", e.cursorX)
+}
+
+func (e *Engine) deleteCharFromQuery() {
+
 }
 
 func (e *Engine) moveCursorLeft() {
@@ -100,7 +117,7 @@ func (e *Engine) moveCursorLeft() {
 }
 
 func (e *Engine) moveCursorRight() {
-	if len(e.query) > e.cursorX {
+	if cellLen([]rune(e.query)) > e.cursorX {
 		e.cursorX++
 	}
 }
