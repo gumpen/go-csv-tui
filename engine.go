@@ -71,6 +71,10 @@ func (e *Engine) Run() *EngineResult {
 			switch ev.Key {
 			case 0:
 				e.addCharToQuery(ev.Ch)
+			case termbox.KeyArrowLeft:
+				e.moveCursorLeft()
+			case termbox.KeyArrowRight:
+				e.moveCursorRight()
 			case termbox.KeyEsc:
 				return &EngineResult{content: "esc!!!\n"}
 			}
@@ -87,4 +91,16 @@ func (e *Engine) addCharToQuery(ch rune) {
 	queryRune := []rune(e.query)
 	e.query = string(append(queryRune, ch))
 	e.cursorX++
+}
+
+func (e *Engine) moveCursorLeft() {
+	if e.cursorX > 0 {
+		e.cursorX--
+	}
+}
+
+func (e *Engine) moveCursorRight() {
+	if len(e.query) > e.cursorX {
+		e.cursorX++
+	}
 }
