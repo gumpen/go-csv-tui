@@ -1,6 +1,8 @@
 package main
 
-import termbox "github.com/nsf/termbox-go"
+import (
+	termbox "github.com/nsf/termbox-go"
+)
 
 const (
 	// Prompt string
@@ -67,8 +69,8 @@ func (e *Engine) Run() *EngineResult {
 		switch ev := termbox.PollEvent(); ev.Type {
 		case termbox.EventKey:
 			switch ev.Key {
-			// case 0:
-			// 	e.addCharToQuery(ev.Ch)
+			case 0:
+				e.addCharToQuery(ev.Ch)
 			case termbox.KeyEsc:
 				return &EngineResult{content: "esc!!!\n"}
 			}
@@ -80,7 +82,9 @@ func (e *Engine) Run() *EngineResult {
 	return &EngineResult{}
 }
 
-// func (e *Engine) addCharToQuery(ch rune) {
-// 	// 文字の挿入はカーソルのインデックス位置に合わせないといけない
-// 	e.query = append(e.query, ch)
-// }
+func (e *Engine) addCharToQuery(ch rune) {
+	// 文字の挿入はカーソルのインデックス位置に合わせないといけない
+	queryRune := []rune(e.query)
+	e.query = string(append(queryRune, ch))
+	e.cursorX++
+}
